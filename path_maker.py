@@ -3,16 +3,9 @@ import matplotlib.pyplot as plt
 import math
 import numpy as np
 
-#meter
-resolution_1 = 0.001
-resolution_2 = 0.2
-read_file_name = "test.csv"
-
-df = pd.read_csv(read_file_name, names=["x","y"])
-plt.plot(df["x"],df["y"],marker="o")
-plt.show()
-
-print(df)
+def show_data(x,y):
+    plt.plot(x,y,marker="o")
+    plt.show()
 
 def judge_inside_outside(p1,p2,p3):
     v_a = np.array(p1) - np.array(p3)
@@ -31,10 +24,6 @@ def make_path(path_point,resolution):
         point_B = [path_point[i][0],path_point[i][1]]
         l = math.hypot(point_A[0] - point_B[0] , point_A[1] - point_B[1]) 
         
-        if (l < resolution):
-            i += 1
-            continue
-        
         l -= resolution
         
         new_point = [point_A[0] *  l / (resolution + l) +  
@@ -50,18 +39,34 @@ def make_path(path_point,resolution):
             i += 1
             
     return path
+if __name__ == '__main__':
+    
+    #meter
+    resolution_1 = 0.001
+    resolution_2 = 0.8
+    input_file_name = "test.csv"
+    output_file_name = "output.csv"
+    
+    df = pd.read_csv(input_file_name, names=["x","y"])
+
+    show_data(df["x"],df["y"])
+    
+    print(df)
         
-temp_path = np.array([df["x"],df["y"]]).T
+    temp_path = np.array([df["x"],df["y"]]).T
+    
+    path = make_path(temp_path , resolution_1)
+    
+    p_array = np.array(path).T
+    plt.plot(p_array[0],p_array[1],marker="o")
+    plt.show()
+    
+    
+    path = make_path(np.array(path) , resolution_2)
+    
+    p_array = np.array(path).T
+    plt.plot(p_array[0],p_array[1],marker="o")
+    plt.show()
+    
+    np.savetxt(output_file_name,path,delimiter=',')
 
-path = make_path(temp_path , resolution_1)
-
-p_array = np.array(path).T
-plt.plot(p_array[0],p_array[1],marker="o")
-plt.show()
-
-
-path = make_path(np.array(path) , resolution_2)
-
-p_array = np.array(path).T
-plt.plot(p_array[0],p_array[1],marker="o")
-plt.show()
